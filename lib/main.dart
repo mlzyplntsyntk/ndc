@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ndc/blocs/session_bloc.dart';
+import 'package:ndc/pages/empty_page.dart';
+import 'package:ndc/pages/schedule_page.dart';
+import 'package:ndc/util/bloc.dart';
 
 void main() => runApp(MyApp());
 
@@ -17,41 +21,81 @@ class MyApp extends StatelessWidget {
               fontSize: 20.0, 
               fontFamily: "FiraSansRegular"
             )
+          ),
+          iconTheme:  IconThemeData(
+            color: Color(0xffe7005c), 
+          ),
+          actionsIconTheme:  IconThemeData(
+            color: Color(0xffe7005c), 
           )
         )
       ),
-      home: MyHomePage(title: 'NDC {London}'),
+      home: BlocProvider<SessionBloc>(
+        bloc:SessionBloc(),
+        child: NavigationPage()
+      ),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
 
-  final String title;
+class NavigationPage extends StatefulWidget {
+  NavigationPage({
+    Key key
+  }) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _NavigationPageState createState() => _NavigationPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  
+class _NavigationPageState extends State<NavigationPage> {
+  //final AlbumBloc albumBloc = AlbumBloc();
+
+  final PageStorageBucket bucket = PageStorageBucket();
+
+  List<Widget> _pages = List<Widget>();
+
+  final SessionBloc sessionBloc = SessionBloc();
+
+  void initState() {
+    super.initState();
+    _pages.add(BlocProvider<SessionBloc>(bloc: sessionBloc, child: SchedulePage(key: PageStorageKey("SchedulePage")),));
+    _pages.add(EmptyPage(key: PageStorageKey("EmptyPage2"),));
+    _pages.add(EmptyPage(key: PageStorageKey("EmptyPage3"),));
+  }
+
+  int _selectedIndex = 0;
+
+  Widget _bottomNavigationBar(int selectedIndex)=>BottomNavigationBar(
+    fixedColor: Color(0xffe7005c),
+    onTap: (int index)=>setState(() => _selectedIndex=index),
+    type: BottomNavigationBarType.fixed,
+    currentIndex: selectedIndex,
+    items: const <BottomNavigationBarItem>[
+      BottomNavigationBarItem(
+        icon: Icon(Icons.calendar_view_day), title: Text("Schedule")
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.mic), title: Text("Speakers")
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.calendar_today), title: Text("My Agenda")
+      )
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text("NDC {London}"),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Welcome',
-            ),
-          ],
-        ),
+      bottomNavigationBar: _bottomNavigationBar(_selectedIndex),
+      body: IndexedStack(
+        children: _pages,
+        index: _selectedIndex,
       ),
     );
   }
 }
+
