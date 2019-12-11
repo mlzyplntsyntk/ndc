@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:ndc/blocs/detail_bloc.dart';
 import 'package:ndc/models/list_state.dart';
 import 'package:ndc/models/session.dart';
@@ -23,6 +24,8 @@ class _SchedulePageState extends State<SchedulePage> {
     final SessionBloc sessionBloc = BlocProvider.of<SessionBloc>(context);
 
     sessionBloc.getSessions();
+    //sessionBloc.getFavoruitesTable();
+    //sessionBloc.removeSessions();
 
     return Scaffold(
       body: RefreshIndicator(
@@ -37,7 +40,8 @@ class _SchedulePageState extends State<SchedulePage> {
                 child: CircularProgressIndicator(
                   backgroundColor: Color(0xffe7005c),
                 )
-              ) : 
+              ) 
+              : 
               Center(
                 child: snapshot.data.hasError ? 
                   Column(
@@ -79,7 +83,10 @@ class _SchedulePageState extends State<SchedulePage> {
                               onTap: () {
                                 Navigator.push(context, MaterialPageRoute(
                                   settings: RouteSettings(isInitialRoute: true),
-                                  builder: (context) => BlocProvider<DetailBloc>(bloc: DetailBloc(), child: DetailPage(item.link, item.title))
+                                  builder: (context) => BlocProvider<DetailBloc>(
+                                    bloc: DetailBloc(), 
+                                    child: DetailPage(item.link, item.title)
+                                  )
                                 ));
                               },
                               child: ListTile(
@@ -92,13 +99,15 @@ class _SchedulePageState extends State<SchedulePage> {
                                     ),
                                   ),
                                 ),
-                                title: Text(
-                                  item.title,
-                                  style: TextStyle(
-                                    fontFamily: "FiraSansRegular"
+                                title: Html(
+                                  data: item.title,
+                                  defaultTextStyle: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "FiraSansRegular",
+                                    fontSize: 16
                                   ),
                                 ),
-                                subtitle: Text("Author 1, Author 2")
+                                subtitle: Text(item.speakers.join(", "))
                               )
                             )
                           )

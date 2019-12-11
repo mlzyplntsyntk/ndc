@@ -6,6 +6,7 @@ class Session {
   final String room;
   final String sessionType;
   final String sessionGroup;
+  final List<dynamic> speakers;
 
   Session({
     this.title,
@@ -14,7 +15,8 @@ class Session {
     this.link,
     this.room,
     this.sessionType,
-    this.sessionGroup
+    this.sessionGroup,
+    this.speakers
   });
 
   Session.fromJson(Map<String, dynamic> json, String groupName) :
@@ -23,6 +25,7 @@ class Session {
     day = json['day'],
     link = json['link'],
     room = json['room'],
+    speakers = json['speakers'],
     sessionGroup = groupName,
     sessionType = 'session';
 }

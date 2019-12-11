@@ -28,6 +28,8 @@ dependencies:
   shared_preferences: ^0.5.4+5
   cached_network_image: ^1.1.1
   flutter_html: ^0.8.2
+  sqflite: any
+  path_provider: any
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ndc/blocs/fav_bloc.dart';
 import 'package:ndc/blocs/session_bloc.dart';
 import 'package:ndc/pages/empty_page.dart';
+import 'package:ndc/pages/fav_page.dart';
 import 'package:ndc/pages/schedule_page.dart';
 import 'package:ndc/util/bloc.dart';
 
@@ -56,19 +58,27 @@ class _NavigationPageState extends State<NavigationPage> {
   List<Widget> _pages = List<Widget>();
 
   final SessionBloc sessionBloc = SessionBloc();
+  final FavBloc favBloc = FavBloc();
+
+  final FavPage favPage = FavPage(key: PageStorageKey("FavPage"));
 
   void initState() {
     super.initState();
     _pages.add(BlocProvider<SessionBloc>(bloc: sessionBloc, child: SchedulePage(key: PageStorageKey("SchedulePage")),));
     _pages.add(EmptyPage(key: PageStorageKey("EmptyPage2"),));
-    _pages.add(EmptyPage(key: PageStorageKey("EmptyPage3"),));
+    _pages.add(BlocProvider<FavBloc>(bloc: favBloc, child: favPage));
   }
 
   int _selectedIndex = 0;
 
   Widget _bottomNavigationBar(int selectedIndex)=>BottomNavigationBar(
     fixedColor: Color(0xffe7005c),
-    onTap: (int index)=>setState(() => _selectedIndex=index),
+    onTap: (int index)=>setState(() {
+      _selectedIndex=index;
+      if (_selectedIndex == 2) {
+        favBloc.getFavourites();
+      }
+    }),
     type: BottomNavigationBarType.fixed,
     currentIndex: selectedIndex,
     items: const <BottomNavigationBarItem>[
