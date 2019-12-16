@@ -48,6 +48,7 @@ class DetailBloc extends BlocBase {
       _detailState.row.time = json['time'];
       _detailState.row.room = json['room'];
       _detailState.row.tags = json['tags'];
+      _detailState.row.speakers = json['speakers'];
       _detailState.row.link = link;
       _detailState.row.isFav = false;
 

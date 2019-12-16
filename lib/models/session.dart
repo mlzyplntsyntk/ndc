@@ -1,12 +1,12 @@
 class Session {
-  final String title;
-  final String time;
-  final String day;
-  final String link;
-  final String room;
-  final String sessionType;
-  final String sessionGroup;
-  final List<dynamic> speakers;
+  String title;
+  String time;
+  String day;
+  String link;
+  String room;
+  String sessionType;
+  String sessionGroup;
+  List<dynamic> speakers;
 
   Session({
     this.title,

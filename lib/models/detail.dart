@@ -4,6 +4,7 @@ class Detail {
   String spotContent;
   String content;
   List<dynamic> tags;
+  List<dynamic> speakers;
   String link;
   String day;
   String time;
@@ -15,6 +16,7 @@ class Detail {
     this.spotContent,
     this.content,
     this.tags,
+    this.speakers,
     this.link,
     this.time,
     this.day,

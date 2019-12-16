@@ -67,7 +67,7 @@ class _DetailPageState extends State<DetailPage> {
                         defaultTextStyle: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontFamily: "FiraSansRegular",
-                          fontSize: 30,
+                          fontSize: 25,
                           color: Color(0xffe7005c), 
                         ),
                       ),

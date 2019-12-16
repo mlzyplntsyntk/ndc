@@ -1,39 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:ndc/blocs/detail_bloc.dart';
-import 'package:ndc/models/list_state.dart';
+import 'package:ndc/blocs/fav_bloc.dart';
+import 'package:ndc/models/detail.dart';
 import 'package:ndc/models/session.dart';
-import 'package:ndc/pages/detail_page.dart';
 
-import '../blocs/session_bloc.dart';
+import '../blocs/detail_bloc.dart';
+import '../models/list_state.dart';
 import '../util/bloc.dart';
+import 'detail_page.dart';
 
-class SchedulePage extends StatefulWidget {
-  SchedulePage({Key key, this.title}) : super(key: key);
+class FavPageCalendar extends StatelessWidget {
+  FavPageCalendar({Key key}) : super(key:key);
 
-  final String title;
-
-  @override
-  _SchedulePageState createState() => _SchedulePageState();
-}
-
-class _SchedulePageState extends State<SchedulePage> {
-  
   @override
   Widget build(BuildContext context) {
-    final SessionBloc sessionBloc = BlocProvider.of<SessionBloc>(context);
-
-    sessionBloc.getSessions();
-    //sessionBloc.getFavoruitesTable();
-    //sessionBloc.removeSessions();
+    final FavBloc favBloc = BlocProvider.of<FavBloc>(context);
 
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () async {
-          sessionBloc.getSessions();
-        },
+      body: Center(
         child: StreamBuilder<ListState<Session>>(
-          stream: sessionBloc.outSessions,
+          stream: favBloc.outFavCalendar,
           builder: (BuildContext context, AsyncSnapshot<ListState<Session>> snapshot) {
             return snapshot == null || snapshot.data == null || snapshot.data.isRefreshing ? 
               Center(
@@ -51,7 +37,7 @@ class _SchedulePageState extends State<SchedulePage> {
                       ),
                       RaisedButton(
                         onPressed: () async {
-                          sessionBloc.getSessions();
+                          favBloc.getFavouritesBoard();
                         },
                         child: Text(
                           "Try Again"
@@ -65,12 +51,12 @@ class _SchedulePageState extends State<SchedulePage> {
                     itemBuilder: (context, index) {
                       final item = snapshot.data.rows[index];
                       
-                      return item.sessionType == 'daytime' ? 
+                      return item.sessionType == 'day' ? 
                         Container(
                           color: Color(0xffe7005c),
                           padding: EdgeInsets.all(10.0),
                           child: Text(
-                            "${item.day} - ${item.time}",
+                            "${item.day}",
                             style: TextStyle(
                               color: Colors.white
                             ),
@@ -81,33 +67,45 @@ class _SchedulePageState extends State<SchedulePage> {
                             color: item.sessionGroup == "odd" ? Color(0xfff2f2f2) : Colors.white,
                             child:InkWell(
                               onTap: () {
+                                if (item.link == null) {
+                                  return;
+                                }
                                 Navigator.push(context, MaterialPageRoute(
                                   settings: RouteSettings(isInitialRoute: true),
                                   builder: (context) => BlocProvider<DetailBloc>(
                                     bloc: DetailBloc(), 
-                                    child: DetailPage(item.link, item.title)
+                                    child: DetailPage(item.link, item.title, onChange: () async {
+                                      await Future.delayed(Duration(milliseconds: 500));
+                                      favBloc.getFavouritesBoard();
+                                    },)
                                   )
                                 ));
                               },
                               child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: Color(0xff2600c3),
-                                  child: Text(
-                                    item.room.replaceAll("Room ", ""),
-                                    style: TextStyle(
-                                      fontFamily: "FiraSansRegular"
+                                leading: Text(
+                                  item.time
+                                ),
+                                title: item.title != null ? 
+                                  Html(
+                                    data: item.title,
+                                    defaultTextStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "FiraSansRegular",
+                                      fontSize: 16
                                     ),
+                                  ) 
+                                  : 
+                                  Text(
+                                    "Empty",
                                   ),
-                                ),
-                                title: Html(
-                                  data: item.title,
-                                  defaultTextStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: "FiraSansRegular",
-                                    fontSize: 16
-                                  ),
-                                ),
-                                subtitle: Text(item.speakers.join(", "))
+                                subtitle: item.room != null ? 
+                                  Text(
+                                    item.room
+                                  ) 
+                                  : 
+                                  Text(
+                                    ""
+                                  )
                               )
                             )
                           )
@@ -117,7 +115,7 @@ class _SchedulePageState extends State<SchedulePage> {
               );
           },
         ),
-      )
+      ),
     );
   }
 }

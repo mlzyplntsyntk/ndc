@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:ndc/blocs/fav_bloc.dart';
 import 'package:ndc/blocs/session_bloc.dart';
+import 'package:ndc/blocs/speakers_bloc.dart';
+import 'package:ndc/models/speaker.dart';
 import 'package:ndc/pages/empty_page.dart';
 import 'package:ndc/pages/fav_page.dart';
+import 'package:ndc/pages/fav_page_calendar.dart';
 import 'package:ndc/pages/schedule_page.dart';
+import 'package:ndc/pages/speakers_page.dart';
 import 'package:ndc/util/bloc.dart';
 
 void main() => runApp(MyApp());
@@ -59,13 +63,17 @@ class _NavigationPageState extends State<NavigationPage> {
 
   final SessionBloc sessionBloc = SessionBloc();
   final FavBloc favBloc = FavBloc();
+  final SpeakersBloc speakersBloc = SpeakersBloc();
 
-  final FavPage favPage = FavPage(key: PageStorageKey("FavPage"));
+  final FavPageCalendar favPage = FavPageCalendar(key: PageStorageKey("FavPage"));
 
   void initState() {
     super.initState();
+
+    speakersBloc.getSpeakers();
+
     _pages.add(BlocProvider<SessionBloc>(bloc: sessionBloc, child: SchedulePage(key: PageStorageKey("SchedulePage")),));
-    _pages.add(EmptyPage(key: PageStorageKey("EmptyPage2"),));
+    _pages.add(BlocProvider<SpeakersBloc>(bloc: speakersBloc, child: SpeakersPage(key: PageStorageKey("SpeakersPage")),));
     _pages.add(BlocProvider<FavBloc>(bloc: favBloc, child: favPage));
   }
 
@@ -76,7 +84,7 @@ class _NavigationPageState extends State<NavigationPage> {
     onTap: (int index)=>setState(() {
       _selectedIndex=index;
       if (_selectedIndex == 2) {
-        favBloc.getFavourites();
+        favBloc.getFavouritesBoard();
       }
     }),
     type: BottomNavigationBarType.fixed,

@@ -20,13 +20,13 @@ class SessionBloc extends BlocBase {
     final db = await Db.db.database;
 
     await db.rawDelete("delete from session_details");
-    await db.rawDelete("delete from session_favs");
   }
 
   Future<List<Session>> getSessions() async {
 
     List<Session> allSessions = List<Session>();
 
+    
     _sessions.isRefreshing = true;
     _sessions.hasError = false;
     _sessions.rows = [];
@@ -53,18 +53,15 @@ class SessionBloc extends BlocBase {
       String lastRenderedDay = "";
       String lastRenderedHour = "";
 
-      String groupName = "odd";
-
       for (Map<String, dynamic> item in json) {
         if (lastRenderedDay != item['day'] + ' ' + item['time']) {
-          allSessions.add(new Session(day: item['day'], time: item['time'], sessionType: 'day'));
+          allSessions.add(new Session(day: item['day'], time: item['time'], sessionType: 'daytime'));
           lastRenderedDay = item['day'] + ' ' + item['time'];
         }
         if (lastRenderedHour != item['time']) {
-          groupName = groupName == "odd" ? "even" : "odd";
           lastRenderedHour = item['time'];
         }
-        allSessions.add(Session.fromJson(item, groupName));
+        allSessions.add(Session.fromJson(item, "even"));
       }
 
       _sessions.isRefreshing = false;
