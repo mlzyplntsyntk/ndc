@@ -26,7 +26,6 @@ class SessionBloc extends BlocBase {
 
     List<Session> allSessions = List<Session>();
 
-    
     _sessions.isRefreshing = true;
     _sessions.hasError = false;
     _sessions.rows = [];
@@ -94,7 +93,7 @@ class SessionBloc extends BlocBase {
 
     return allSessions;
   }
-  
+
   void getFavoruitesTable() async {
     var allSessions = await getSessions();
 

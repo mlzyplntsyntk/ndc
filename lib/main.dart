@@ -38,7 +38,10 @@ class MyApp extends StatelessWidget {
       ),
       home: BlocProvider<SessionBloc>(
         bloc:SessionBloc(),
-        child: NavigationPage()
+        child: BlocProvider<SpeakersBloc>(
+          bloc:SpeakersBloc(),
+          child: NavigationPage()
+        )
       ),
     );
   }
@@ -61,19 +64,15 @@ class _NavigationPageState extends State<NavigationPage> {
 
   List<Widget> _pages = List<Widget>();
 
-  final SessionBloc sessionBloc = SessionBloc();
   final FavBloc favBloc = FavBloc();
-  final SpeakersBloc speakersBloc = SpeakersBloc();
-
+  
   final FavPageCalendar favPage = FavPageCalendar(key: PageStorageKey("FavPage"));
 
   void initState() {
     super.initState();
 
-    speakersBloc.getSpeakers();
-
-    _pages.add(BlocProvider<SessionBloc>(bloc: sessionBloc, child: SchedulePage(key: PageStorageKey("SchedulePage")),));
-    _pages.add(BlocProvider<SpeakersBloc>(bloc: speakersBloc, child: SpeakersPage(key: PageStorageKey("SpeakersPage")),));
+    _pages.add(SchedulePage(key: PageStorageKey("SchedulePage"),));
+    _pages.add(SpeakersPage(key: PageStorageKey("SpeakersPage"),));
     _pages.add(BlocProvider<FavBloc>(bloc: favBloc, child: favPage));
   }
 
@@ -103,7 +102,10 @@ class _NavigationPageState extends State<NavigationPage> {
   );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
+    final SpeakersBloc speakersBloc = BlocProvider.of<SpeakersBloc>(context);
+    speakersBloc.getSpeakers();
+
     return Scaffold(
       appBar: AppBar(
         title: Text("NDC {London}"),

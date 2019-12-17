@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:ndc/blocs/session_bloc.dart';
 import 'package:ndc/blocs/speaker_detail_bloc.dart';
 import 'package:ndc/blocs/speakers_bloc.dart';
 import 'package:ndc/models/speaker.dart';
@@ -62,7 +63,7 @@ class SpeakersPage extends StatelessWidget {
                                   settings: RouteSettings(isInitialRoute: true),
                                   builder: (context) => BlocProvider<SpeakerDetailBloc>(
                                     bloc: SpeakerDetailBloc(), 
-                                    child: SpeakerPage(item.name, item.link)
+                                    child: SpeakerPage(item.name, item.link, item.job, item.photo)
                                   )
                                 ));
                               },
