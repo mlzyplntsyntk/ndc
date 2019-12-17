@@ -31,7 +31,7 @@ class _SchedulePageState extends State<SchedulePage> {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
-          sessionBloc.getSessions();
+          sessionBloc.getSessions(forceReload: true);
         },
         child: StreamBuilder<ListState<Session>>(
           stream: sessionBloc.outSessions,

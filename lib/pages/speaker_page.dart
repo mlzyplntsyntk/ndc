@@ -34,20 +34,29 @@ class SpeakerPage extends StatelessWidget {
                   child:Text(snapshot.data.errorMessage)
                 )
                 : 
-                Padding(
-                  padding: EdgeInsets.all(15),
-                  child: Column(
-                    children: <Widget>[
-                      Html(
-                        data: snapshot.data.row.content,
-                        defaultTextStyle: TextStyle(
-                          fontSize: 16,
-                          fontFamily: "FiraSansRegular",
-                        ),
+                Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(15),
+                      child: Column(
+                        children: <Widget>[
+                          Html(
+                            data: snapshot.data.row.content,
+                            defaultTextStyle: TextStyle(
+                              fontSize: 16,
+                              fontFamily: "FiraSansRegular",
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 20,),
+                    Text(
+                      snapshot.data.row.sessions.toString()
+                    )
+                  ],
                 )
+                
             );
         },
       ),

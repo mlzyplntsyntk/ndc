@@ -22,7 +22,7 @@ class SessionBloc extends BlocBase {
     await db.rawDelete("delete from session_details");
   }
 
-  Future<List<Session>> getSessions() async {
+  Future<List<Session>> getSessions({bool forceReload = false}) async {
 
     List<Session> allSessions = List<Session>();
 
@@ -32,14 +32,18 @@ class SessionBloc extends BlocBase {
     _sessions.rows = [];
     _inSessions.add(_sessions);
     
+
     try {
       final db = await Db.db.database;
 
-      await db.rawDelete("delete from json_data where content_type = ?", [
-        'sessions'
-      ]);
-
       String sessionResponseString;
+
+      if (forceReload) {
+        await db.rawDelete("delete from json_data where content_type = ?", [
+          'sessions'
+        ]);
+      }
+
       bool fromCache = false;
 
       var dbResponse = await db.rawQuery("select * from json_data where content_type='sessions'");

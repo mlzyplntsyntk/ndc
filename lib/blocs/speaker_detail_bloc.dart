@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:ndc/models/entity_state.dart';
 import 'package:ndc/models/speaker.dart';
@@ -18,8 +19,14 @@ class SpeakerDetailBloc extends BlocBase {
 
     try {
       String speakerResponseString = await api.getRequest("http://sarbay.com/api/examples/ndc_speaker.php?url=$link");
+      
+      dynamic json = jsonDecode(speakerResponseString);
 
-      _state.row = Speaker(content: "test");
+      _state.row = Speaker(
+        content: json['content'],
+        sessions: json['sessions']
+      );
+
     } catch (err) {
       _state.hasError = true;
       _state.errorMessage = err.toString();
