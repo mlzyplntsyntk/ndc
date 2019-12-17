@@ -26,9 +26,10 @@ class Db {
       version: 3, 
       onOpen: (db) {}, 
       onCreate: (Database db, int version) async {
-        await db.execute("CREATE TABLE sessions ("
+        await db.execute("CREATE TABLE json_data ("
           "id INTEGER PRIMARY KEY,"
-          "allSessions TEXT"
+          "content_type TEXT,"
+          "content TEXT"
           ")");
 
         await db.execute("CREATE TABLE session_details ("

@@ -1,17 +1,25 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:ndc/blocs/detail_bloc.dart';
+import 'package:ndc/blocs/speaker_detail_bloc.dart';
+import 'package:ndc/blocs/speakers_bloc.dart';
 import 'package:ndc/models/detail.dart';
 import 'package:ndc/models/entity_state.dart';
+import 'package:ndc/models/list_state.dart';
+import 'package:ndc/models/speaker.dart';
+import 'package:ndc/pages/speaker_page.dart';
 
 import '../util/bloc.dart';
 
 class DetailPage extends StatefulWidget {
-  DetailPage(this.link, this.title, {this.onChange});
+  DetailPage(this.link, this.title, this.speakers, {this.onChange});
 
   final String title;
   final String link;
+  final List<dynamic> speakers;
+
   final Function onChange;
 
   _DetailPageState createState() => _DetailPageState();
@@ -21,9 +29,10 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     final DetailBloc detailBloc = BlocProvider.of<DetailBloc>(context);
+    final SpeakersBloc speakersBloc = BlocProvider.of<SpeakersBloc>(context);
 
     detailBloc.getDetails(widget.link);
-
+    
     return Scaffold(
       appBar: AppBar(
         title: Text("Session Detail"),
@@ -50,6 +59,9 @@ class _DetailPageState extends State<DetailPage> {
       body: StreamBuilder<EntityState<Detail>>(
         stream: detailBloc.outDetail,
         builder: (BuildContext context, AsyncSnapshot<EntityState<Detail>> snapshot) {
+          if (snapshot != null && snapshot.data != null && snapshot.data.row != null) {
+            speakersBloc.getSpecificSpeakers(widget.speakers);
+          }
           return snapshot == null || snapshot.data == null || snapshot.data.isRefreshing ? 
             Center(child: CircularProgressIndicator(),) : 
             SingleChildScrollView(
@@ -90,6 +102,51 @@ class _DetailPageState extends State<DetailPage> {
                           fontSize: 16,
                           fontFamily: "FiraSansRegular",
                         ),
+                      ),
+                      Html(
+                        data: "Speakers",
+                        defaultTextStyle: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "FiraSansRegular",
+                          fontSize: 25,
+                          color: Color(0xffe7005c), 
+                        ),
+                      ),
+                      SizedBox(height: 30,),
+                      StreamBuilder<ListState<Speaker>>(
+                        stream: speakersBloc.outSingleSession,
+                        builder: (BuildContext context, AsyncSnapshot<ListState<Speaker>> snapshot) {
+                          return snapshot == null || snapshot.data == null ? CircularProgressIndicator() : Padding(
+                            padding: const EdgeInsets.only(top: 0, bottom: 0.0),
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: snapshot.data.rows.length,
+                              itemBuilder: (context ,index) {
+                                final item = snapshot.data.rows[index];
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(
+                                      settings: RouteSettings(isInitialRoute: true),
+                                      builder: (context) => BlocProvider<SpeakerDetailBloc>(
+                                        bloc: SpeakerDetailBloc(), 
+                                        child: SpeakerPage(item.name, item.link)
+                                      )
+                                    ));
+                                  },
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundImage: CachedNetworkImageProvider(item.photo),
+                                      backgroundColor: Colors.grey,
+                                    ),
+                                    title: Text(item.name),
+                                    subtitle: Text(item.job)
+                                  )
+                                );
+                              }
+                            ),
+                          );
+                        },
                       )
                     ],
                   ),

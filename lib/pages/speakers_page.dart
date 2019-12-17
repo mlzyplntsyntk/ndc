@@ -1,15 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:ndc/blocs/fav_bloc.dart';
+import 'package:ndc/blocs/speaker_detail_bloc.dart';
 import 'package:ndc/blocs/speakers_bloc.dart';
-import 'package:ndc/models/detail.dart';
 import 'package:ndc/models/speaker.dart';
+import 'package:ndc/pages/speaker_page.dart';
 
-import '../blocs/detail_bloc.dart';
 import '../models/list_state.dart';
 import '../util/bloc.dart';
-import 'detail_page.dart';
 
 class SpeakersPage extends StatelessWidget {
   SpeakersPage({Key key}) : super(key:key);
@@ -60,7 +58,13 @@ class SpeakersPage extends StatelessWidget {
                             color: Colors.white,
                             child:InkWell(
                               onTap: () {
-                                
+                                Navigator.push(context, MaterialPageRoute(
+                                  settings: RouteSettings(isInitialRoute: true),
+                                  builder: (context) => BlocProvider<SpeakerDetailBloc>(
+                                    bloc: SpeakerDetailBloc(), 
+                                    child: SpeakerPage(item.name, item.link)
+                                  )
+                                ));
                               },
                               child: ListTile(
                                 leading: CircleAvatar(

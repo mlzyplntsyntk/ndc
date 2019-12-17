@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:ndc/blocs/detail_bloc.dart';
+import 'package:ndc/blocs/speakers_bloc.dart';
 import 'package:ndc/models/list_state.dart';
 import 'package:ndc/models/session.dart';
 import 'package:ndc/pages/detail_page.dart';
@@ -75,7 +76,9 @@ class _SchedulePageState extends State<SchedulePage> {
                               color: Colors.white
                             ),
                           )
-                        ) : Container(
+                        ) 
+                        : 
+                        Container(
                           child: Card(
                             elevation: 0,
                             color: item.sessionGroup == "odd" ? Color(0xfff2f2f2) : Colors.white,
@@ -85,7 +88,10 @@ class _SchedulePageState extends State<SchedulePage> {
                                   settings: RouteSettings(isInitialRoute: true),
                                   builder: (context) => BlocProvider<DetailBloc>(
                                     bloc: DetailBloc(), 
-                                    child: DetailPage(item.link, item.title)
+                                    child: BlocProvider<SpeakersBloc>(
+                                      bloc: SpeakersBloc(),
+                                      child: DetailPage(item.link, item.title, item.speakers)
+                                    )
                                   )
                                 ));
                               },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:ndc/blocs/fav_bloc.dart';
+import 'package:ndc/blocs/speakers_bloc.dart';
 import 'package:ndc/models/detail.dart';
 import 'package:ndc/models/session.dart';
 
@@ -74,10 +75,13 @@ class FavPageCalendar extends StatelessWidget {
                                   settings: RouteSettings(isInitialRoute: true),
                                   builder: (context) => BlocProvider<DetailBloc>(
                                     bloc: DetailBloc(), 
-                                    child: DetailPage(item.link, item.title, onChange: () async {
-                                      await Future.delayed(Duration(milliseconds: 500));
-                                      favBloc.getFavouritesBoard();
-                                    },)
+                                    child: BlocProvider<SpeakersBloc>(
+                                      bloc: SpeakersBloc(),
+                                      child: DetailPage(item.link, item.title, item.speakers, onChange: () async {
+                                        await Future.delayed(Duration(milliseconds: 500));
+                                        favBloc.getFavouritesBoard();
+                                      }
+                                    ),)
                                   )
                                 ));
                               },

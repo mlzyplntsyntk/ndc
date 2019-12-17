@@ -60,7 +60,7 @@ class FavPage extends StatelessWidget {
                                   settings: RouteSettings(isInitialRoute: true),
                                   builder: (context) => BlocProvider<DetailBloc>(
                                     bloc: DetailBloc(), 
-                                    child: DetailPage(item.link, item.title, onChange: () async {
+                                    child: DetailPage(item.link, item.title, item.speakers, onChange: () async {
                                       await Future.delayed(Duration(milliseconds: 500));
                                       favBloc.getFavourites();
                                     },)

@@ -85,12 +85,12 @@ class FavBloc extends BlocBase {
 
       final db = await Db.db.database;
 
-      var dbResponse = await db.rawQuery("select * from sessions");
+      var dbResponse = await db.rawQuery("select * from json_data where content_type='sessions'");
 
       if (dbResponse.isNotEmpty) {
         List<Session> allSessions = List<Session>();
 
-        var sessionResponseString = dbResponse.first["allSessions"].toString();
+        var sessionResponseString = dbResponse.first["content"].toString();
 
         String lastRenderedDay = "";
         String lastRenderedHour = "";

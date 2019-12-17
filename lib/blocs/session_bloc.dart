@@ -35,14 +35,16 @@ class SessionBloc extends BlocBase {
     try {
       final db = await Db.db.database;
 
-      await db.rawDelete("delete from sessions");
+      await db.rawDelete("delete from json_data where content_type = ?", [
+        'sessions'
+      ]);
 
       String sessionResponseString;
       bool fromCache = false;
 
-      var dbResponse = await db.rawQuery("select * from sessions");
+      var dbResponse = await db.rawQuery("select * from json_data where content_type='sessions'");
       if (dbResponse.isNotEmpty) {
-        sessionResponseString = dbResponse.first["allSessions"].toString();
+        sessionResponseString = dbResponse.first["content"].toString();
         fromCache = true;
       } else {
         sessionResponseString = await api.getRequest("http://sarbay.com/api/examples/ndc.php");
@@ -70,8 +72,11 @@ class SessionBloc extends BlocBase {
       _inSessions.add(_sessions);
 
       if (!fromCache) {
-        await db.rawDelete("delete from sessions");
-        await db.rawInsert("insert into sessions (allSessions) values (?)", [
+        await db.rawDelete("delete from json_data where content_type = ?", [
+          'sessions'
+        ]);
+        await db.rawInsert("insert into json_data (content_type, content) values (?, ?)", [
+          'sessions',
           sessionResponseString
         ]);
       }
